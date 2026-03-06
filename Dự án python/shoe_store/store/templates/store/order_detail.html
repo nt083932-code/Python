@@ -1,0 +1,216 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Chi Tiết Đơn Hàng #{{ order.id }} - ShoeStore{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8">
+            <h1 class="mb-4">
+                <i class="fas fa-receipt"></i> Đơn Hàng #{{ order.id }}
+            </h1>
+
+            <!-- Order Information -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Thông Tin Đơn Hàng</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p><strong>Mã Đơn:</strong> #{{ order.id }}</p>
+                            <p><strong>Ngày Tạo:</strong> {{ order.created_at|date:"d/m/Y H:i" }}</p>
+                            <p><strong>Khách Hàng:</strong> {{ order.customer.get_full_name|default:order.customer.username }}</p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <h4 class="text-primary">{{ order.total_price|floatformat:0 }} đ</h4>
+                            {% if order.status == 'pending' %}
+                            <span class="badge bg-warning text-dark">Chờ Duyệt</span>
+                            {% elif order.status == 'approved' %}
+                            <span class="badge bg-success">Đã Duyệt</span>
+                            {% else %}
+                            <span class="badge bg-danger">Bị Từ Chối</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Details -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Chi Tiết Sản Phẩm</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            {% if order.product.image %}
+                            <img src="{{ order.product.image.url }}" alt="{{ order.product.name }}" class="img-fluid">
+                            {% else %}
+                            <img src="https://via.placeholder.com/200x200?text=Không+có+hình" alt="{{ order.product.name }}" class="img-fluid">
+                            {% endif %}
+                        </div>
+                        <div class="col-md-9">
+                            <h5>{{ order.product.name }}</h5>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>Thương Hiệu:</strong></td>
+                                    <td>{{ order.product.brand }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Kích Cỡ:</strong></td>
+                                    <td>{{ order.product.size }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Màu Sắc:</strong></td>
+                                    <td>{{ order.product.color }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Số Lượng:</strong></td>
+                                    <td>{{ order.quantity }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Giá Đơn Vị:</strong></td>
+                                    <td>{{ order.product.price|floatformat:0 }} đ</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tổng:</strong></td>
+                                    <td class="fw-bold text-primary">{{ order.total_price|floatformat:0 }} đ</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes -->
+            {% if order.notes %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Ghi Chú</h5>
+                </div>
+                <div class="card-body">
+                    {{ order.notes }}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Admin Approval Form -->
+            {% if is_admin and order.status == 'pending' %}
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Duyệt Đơn Hàng (Admin)</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_status" class="form-label">Trạng Thái</label>
+                            {{ form.status }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_notes" class="form-label">Ghi Chú Duyệt</label>
+                            {{ form.notes }}
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-check"></i> Cập Nhật
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Tóm Tắt Đơn Hàng</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        <tr>
+                            <td>Giá Sản Phẩm:</td>
+                            <td class="text-end">{{ order.product.price|floatformat:0 }} đ</td>
+                        </tr>
+                        <tr>
+                            <td>Số Lượng:</td>
+                            <td class="text-end">{{ order.quantity }}</td>
+                        </tr>
+                        <tr class="table-active">
+                            <td><strong>Tổng Tiền:</strong></td>
+                            <td class="text-end"><strong>{{ order.total_price|floatformat:0 }} đ</strong></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Status Timeline -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5 class="mb-0">Lịch Sử Trạng Thái</h5>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-info"></div>
+                            <div class="timeline-content">
+                                <h6>Tạo Đơn Hàng</h6>
+                                <small class="text-muted">{{ order.created_at|date:"d/m/Y H:i" }}</small>
+                            </div>
+                        </div>
+                        {% if order.status != 'pending' %}
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-success"></div>
+                            <div class="timeline-content">
+                                <h6>
+                                    {% if order.status == 'approved' %}
+                                    Đã Duyệt
+                                    {% else %}
+                                    Bị Từ Chối
+                                    {% endif %}
+                                </h6>
+                                <small class="text-muted">{{ order.approved_date|date:"d/m/Y H:i" }}</small>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="mt-4">
+        <a href="{% url 'order_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i>  Quay Lại Danh Sách
+        </a>
+    </div>
+</div>
+
+<style>
+.timeline-item {
+    display: flex;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.timeline-marker {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-top: 5px;
+    margin-right: 20px;
+    flex-shrink: 0;
+}
+
+.timeline-content h6 {
+    margin: 0;
+}
+</style>
+{% endblock %}

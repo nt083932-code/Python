@@ -1,0 +1,197 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Dashboard Quản Trị - ShoeStore{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-5">
+    <h1 class="mb-4">
+        <i class="fas fa-chart-line"></i> Dashboard Quản Trị
+    </h1>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-5 g-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="card text-white h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body">
+                    <h6 class="card-title">Tổng Đơn Hàng</h6>
+                    <h2 class="mb-0">{{ total_orders }}</h2>
+                    <small>Tất cả thời gian</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card text-white h-100" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <div class="card-body">
+                    <h6 class="card-title">Chờ Duyệt</h6>
+                    <h2 class="mb-0">{{ pending_orders }}</h2>
+                    <small>Cần xử lý</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card text-white h-100" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                <div class="card-body">
+                    <h6 class="card-title">Doanh Thu</h6>
+                    <h2 class="mb-0">{{ total_revenue|floatformat:0 }}</h2>
+                    <small>VNĐ</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="card text-white h-100" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                <div class="card-body">
+                    <h6 class="card-title">Khách Hàng</h6>
+                    <h2 class="mb-0">{{ total_users }}</h2>
+                    <small>{{ new_users }} mới tháng này</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Order Status Chart -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Trạng Thái Đơn Hàng</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="orderStatusChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Stats -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Tóm Tắt Thống Kê</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Sản Phẩm</h6>
+                            <h3>{{ total_products }}</h3>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Danh Mục</h6>
+                            <h3>{{ total_categories }}</h3>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Đã Duyệt</h6>
+                            <h3 class="text-success">{{ approved_orders }}</h3>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="text-muted">Bị Từ Chối</h6>
+                            <h3 class="text-danger">{{ rejected_orders }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Products -->
+    <div class="row mt-4">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Top Sản Phẩm Bán Chạy</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Sản Phẩm</th>
+                                <th>Số Đơn</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in top_products %}
+                            <tr>
+                                <td><strong>{{ product.name }}</strong></td>
+                                <td>{{ product.order_count }} đơn</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="2" class="text-muted text-center">Chưa có dữ liệu</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Đơn Hàng Gần Đây</h5>
+                </div>
+                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-sm table-hover">
+                        <thead>
+                            <tr>
+                                <th>Mã</th>
+                                <th>Khách</th>
+                                <th>Tiền</th>
+                                <th>Trạng Thái</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in recent_orders %}
+                            <tr>
+                                <td><a href="{% url 'order_detail' order.pk %}" class="text-decoration-none">#{{ order.id }}</a></td>
+                                <td>{{ order.customer.first_name|default:order.customer.username }}</td>
+                                <td>{{ order.total_price|floatformat:0 }}đ</td>
+                                <td>
+                                    {% if order.status == 'pending' %}
+                                    <span class="badge bg-warning">Chờ</span>
+                                    {% elif order.status == 'approved' %}
+                                    <span class="badge bg-success">OK</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">X</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Order Status Chart
+const ctxOrderStatus = document.getElementById('orderStatusChart');
+if (ctxOrderStatus) {
+    const pendingOrders = {{ orders_by_status.pending|default:0 }};
+    const approvedOrders = {{ orders_by_status.approved|default:0 }};
+    const rejectedOrders = {{ orders_by_status.rejected|default:0 }};
+    
+    new Chart(ctxOrderStatus, {
+        type: 'doughnut',
+        data: {
+            labels: ['Chờ Duyệt', 'Đã Duyệt', 'Bị Từ Chối'],
+            datasets: [{
+                data: [pendingOrders, approvedOrders, rejectedOrders],
+                backgroundColor: ['#ffc107', '#28a745', '#dc3545'],
+                borderColor: '#fff',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                }
+            }
+        }
+    });
+}
+</script>
+{% endblock %}

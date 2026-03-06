@@ -1,0 +1,86 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Liên Hệ - ShoeStore{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-5 text-center">
+        <i class="fas fa-envelope"></i> Liên Hệ Với Chúng Tôi
+    </h1>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Thông Tin Liên Hệ</h5>
+                    
+                    <div class="mb-4">
+                        <h6><i class="fas fa-phone text-primary"></i> Điện Thoại</h6>
+                        <p><a href="tel:+84123456789">+84 (0) 123 456 789</a></p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6><i class="fas fa-envelope text-primary"></i> Email</h6>
+                        <p><a href="mailto:info@shoestore.com">info@shoestore.com</a></p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6><i class="fas fa-map-marker-alt text-primary"></i> Địa Chỉ</h6>
+                        <p>123 Đường Nguyễn Huệ<br>Quận Hoàn Kiếm, Hà Nội<br>Việt Nam</p>
+                    </div>
+
+                    <div>
+                        <h6><i class="fas fa-clock text-primary"></i> Giờ Làm Việc</h6>
+                        <p>Thứ 2 - Thứ 6: 8:30 - 18:00<br>Thứ 7: 9:00 - 17:00<br>Chủ Nhật: 10:00 - 16:00</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Gửi Tin Nhắn</h5>
+                    
+                    <form>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Họ Tên</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Chủ Đề</label>
+                            <input type="text" class="form-control" id="subject" name="subject" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Tin Nhắn</label>
+                            <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-send"></i> Gửi Tin Nhắn
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map -->
+    <div class="mt-5">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Bản Đồ</h5>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.5961696370503!2d105.84371071532584!3d21.02878758597906!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab744f9f1d7d%3A0x6f1d1e7f1d7e0f0f!2sHoan%20Kiem%2C%20Hanoi!5e0!3m2!1sen!2s!4v1234567890" 
+                    width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

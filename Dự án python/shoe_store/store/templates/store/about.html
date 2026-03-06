@@ -1,0 +1,62 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Về Chúng Tôi - ShoeStore{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-5 text-center">
+        <i class="fas fa-info-circle"></i> Về Chúng Tôi
+    </h1>
+
+    <div class="row mb-5">
+        <div class="col-md-6">
+            <h3>Chào Mừng Đến ShoeStore</h3>
+            <p>
+                ShoeStore là một cửa hàng trực tuyến chuyên cung cấp những sản phẩm giày dép chất lượng cao 
+                với giá cạnh tranh nhất trên thị trường.
+            </p>
+            <p>
+                Chúng tôi cam kết mang lại trải nghiệm mua sắm tuyệt vời cho mọi khách hàng, 
+                từ sự lựa chọn đa dạng đến dịch vụ khách hàng tận tâm.
+            </p>
+        </div>
+        <div class="col-md-6">
+            <img src="https://via.placeholder.com/400x300?text=ShoeStore" alt="ShoeStore" class="img-fluid rounded">
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-md-4 text-center mb-4">
+            <div class="mb-3">
+                <i class="fas fa-check-circle" style="font-size: 3rem; color: #3498db;"></i>
+            </div>
+            <h5>Sản Phẩm Chất Lượng</h5>
+            <p>Tất cả sản phẩm đều được kiểm tra kỹ lưỡng trước khi gửi đến khách hàng.</p>
+        </div>
+        <div class="col-md-4 text-center mb-4">
+            <div class="mb-3">
+                <i class="fas fa-shipping-fast" style="font-size: 3rem; color: #27ae60;"></i>
+            </div>
+            <h5>Giao Hàng Nhanh</h5>
+            <p>Chúng tôi cung cấp dịch vụ giao hàng nhanh và an toàn đến tận nơi.</p>
+        </div>
+        <div class="col-md-4 text-center mb-4">
+            <div class="mb-3">
+                <i class="fas fa-headset" style="font-size: 3rem; color: #e74c3c;"></i>
+            </div>
+            <h5>Hỗ Trợ 24/7</h5>
+            <p>Đội ngũ hỗ trợ khách hàng của chúng tôi luôn sẵn sàng giúp đỡ bạn.</p>
+        </div>
+    </div>
+
+    <div class="card bg-light">
+        <div class="card-body text-center py-5">
+            <h3>Liên Hệ Với Chúng Tôi</h3>
+            <p class="mb-3">Có câu hỏi? Chúng tôi rất muốn nghe từ bạn.</p>
+            <a href="{% url 'contact' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-envelope"></i> Gửi Tin Nhắn
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends 'store/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Hồ Sơ Người Dùng - ShoeStore{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <!-- User Info Card -->
+            <div class="card">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-user-circle" style="font-size: 5rem; color: #3498db;"></i>
+                    </div>
+                    <h5>{{ user.get_full_name|default:user.username }}</h5>
+                    <p class="text-muted">{{ user.email }}</p>
+                    <div class="badge bg-info">
+                        {% if profile.user_type == 'admin' %}
+                        Quản Trị Viên
+                        {% else %}
+                        Khách Hàng
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <!-- User Profile Form -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-edit"></i> Cập Nhật Hồ Sơ
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="">
+                        {% csrf_token %}
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label"><strong>Tên:</strong></label>
+                                <p>{{ user.first_name }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label"><strong>Họ:</strong></label>
+                                <p>{{ user.last_name }}</p>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Email:</strong></label>
+                            <p>{{ user.email }}</p>
+                        </div>
+
+                        <hr>
+
+                        <div class="mb-3">
+                            <label for="id_phone" class="form-label">Số Điện Thoại</label>
+                            {{ form.phone }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_address" class="form-label">Địa Chỉ</label>
+                            {{ form.address }}
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="id_city" class="form-label">Thành Phố</label>
+                                {{ form.city }}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_postal_code" class="form-label">Mã Bưu Điện</label>
+                                {{ form.postal_code }}
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Lưu Thay Đổi
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Recent Orders -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history"></i> Đơn Hàng Gần Đây
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_orders %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Mã Đơn</th>
+                                    <th>Sản Phẩm</th>
+                                    <th>Ngày</th>
+                                    <th>Trạng Thái</th>
+                                    <th>Hành Động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in recent_orders %}
+                                <tr>
+                                    <td><strong>#{{ order.id }}</strong></td>
+                                    <td>{{ order.product.name }}</td>
+                                    <td>{{ order.created_at|date:"d/m/Y" }}</td>
+                                    <td>
+                                        {% if order.status == 'pending' %}
+                                        <span class="badge bg-warning">Chờ Duyệt</span>
+                                        {% elif order.status == 'approved' %}
+                                        <span class="badge bg-success">Đã Duyệt</span>
+                                        {% else %}
+                                        <span class="badge bg-danger">Bị Từ Chối</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'order_detail' order.pk %}" class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <a href="{% url 'order_list' %}" class="btn btn-secondary">
+                        Xem Tất Cả Đơn Hàng
+                    </a>
+                    {% else %}
+                    <p class="text-muted">Chưa có đơn hàng nào</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
